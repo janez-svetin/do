@@ -4,6 +4,10 @@ body,
   height: 100%;
 }
 
+.do-Header {
+  text-align: center;
+}
+
 .do-Main {
   display: flex;
   align-items: center;
@@ -24,4 +28,8 @@ body,
   padding: 20px;
   color: #000;
   text-decoration: none;
+}
+
+.is-disabled {
+  opacity: 0.5;
 }
