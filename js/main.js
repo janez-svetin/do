@@ -7,15 +7,15 @@ Storage.prototype.getObj = function(key) {
     return JSON.parse(this.getItem(key))
 }
 
-var _MS_PER_DAY = 1000 * 60 * 60 * 24;
+var milisecondsPerDay = 1000 * 60 * 60 * 24;
 
-// a and b are javascript Date objects
-function dateDiffInDays(a, b) {
+// startDate and endDate are javascript Date objects
+function dateDiffInDays(startDate, endDate) {
   // Discard the time and time-zone information.
-  var utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
-  var utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+  var utc1 = Date.UTC(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+  var utc2 = Date.UTC(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
 
-  return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+  return Math.floor((utc2 - utc1) / milisecondsPerDay);
 }
 
 // global _do object
@@ -23,7 +23,8 @@ var _do = {};
 
 jQuery(document).ready(function($) {
   _do = localStorage.getObj('_do');
-  if (_do === null) { // does not yet exists in local storage, create one with default values
+  // does not yet exists in local storage, create one with default values
+  if (_do === null) {
     _do = {};
     _do.title = 'Enter calendar name';
     _do.counter = 0;
@@ -31,7 +32,8 @@ jQuery(document).ready(function($) {
     localStorage.setObj('_do', _do);
   } else {
     var currDate = new Date();
-    if (dateDiffInDays(new Date(_do.date), currDate) >= 1 || _do.counter === 0) { // enable the button if coming back after more than 1 or next day OR the counter is reset at 0
+    // enable the button if coming back after more than 1 or next day OR the counter is reset at 0
+    if (dateDiffInDays(new Date(_do.date), currDate) >= 1 || _do.counter === 0) {
       $('#do-Button--counter')
         .attr('disabled', false)
         .removeClass('is-disabled');
@@ -44,14 +46,15 @@ jQuery(document).ready(function($) {
   }
 
   // set title to current value in local storage
-  $('#do-Header').html(_do.title);
+  $('#do-Header-heading').html(_do.title);
 
   //set counter to current value in local storage
   $('#do-Number--counter').html(_do.counter);
 
   $('#do-Button--counter').on('click', function() {
     var currDate = new Date();
-    if (dateDiffInDays(new Date(_do.date), currDate) > 1) { // if the difference between current day and the day last clicked is bigger than 1 then reset the counter
+    // if the difference between current day and the day last clicked is bigger than 1 then reset the counter
+    if (dateDiffInDays(new Date(_do.date), currDate) > 1) {
       _do.counter = 1;
     } else { // day difference is one, allow counting
       _do.counter++;
@@ -65,14 +68,14 @@ jQuery(document).ready(function($) {
     }
   });
 
-  $('#do-Header').on('focus', function() {
+  $('#do-Header-heading').on('focus', function() {
     before = $(this).html();
   }).on('blur keyup paste', function() {
     if (before != $(this).html()) { $(this).trigger('change'); }
   });
 
-  $('#do-Header').on('change', function() {
-    _do.title = $('#do-Header').html();
+  $('#do-Header-heading').on('change', function() {
+    _do.title = $('#do-Header-heading').html();
     localStorage.setObj('_do', _do);
   });
 });
